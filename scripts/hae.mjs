@@ -1,7 +1,8 @@
 // Normalize a Health Auto Export (iOS) JSON export into one record per day:
 //   { "YYYY-MM-DD": { weight: lb, sleep: hours, steps: count } }
 // Accepts the app's REST body ({ data: { metrics: [...] } }), a bare { metrics: [...] },
-// or an already-normalized { days: {...} } (passed through).
+// an already-normalized { days: {...} } (passed through), or the flat body the iOS
+// Shortcut sends (see fromShortcut below).
 //
 // Assumptions about the export (set in the app's automation settings):
 //   - Metrics: Weight (weight_body_mass), Sleep Analysis (sleep_analysis), Step Count (step_count)
@@ -16,6 +17,7 @@ const round = (v, p) => Math.round(v * 10 ** p) / 10 ** p;
 export function normalize(payload) {
   if (!payload || typeof payload !== 'object') throw new Error('Payload is not an object');
   if (payload.days && typeof payload.days === 'object') return clean(payload.days);
+  if (typeof payload.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(payload.date.trim())) return clean(fromShortcut(payload));
   const metrics = payload.data?.metrics ?? payload.metrics;
   if (!Array.isArray(metrics)) throw new Error('No metrics array found in payload');
 
@@ -58,6 +60,32 @@ export function normalize(payload) {
     }
   }
   return clean(out);
+}
+
+// The iOS Shortcut runs each morning and sends one flat object:
+//   { date, weight, sleep_minutes, steps_date, steps }
+// date = today (this morning's weigh-in and last night's sleep), steps_date = yesterday
+// (a full day of steps). Shortcuts may send numbers as text like "170.2 lb" or "12,034",
+// and leaves a field empty when there is no sample, so parse leniently.
+function parseNum(v) {
+  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+  if (typeof v !== 'string') return null;
+  const m = v.replace(/,/g, '').match(/-?\d+(\.\d+)?/);
+  return m ? Number(m[0]) : null;
+}
+function fromShortcut(p) {
+  const out = {};
+  const date = p.date.trim();
+  let w = parseNum(p.weight);
+  // Apple Health may hand back kilograms; the goal range (168–225 lb) never overlaps kg values.
+  if (w != null && (/kg/i.test(String(p.weight)) || w < 120)) w *= KG_TO_LB;
+  if (w != null) (out[date] ??= {}).weight = round(w, 1);
+  const sleepMin = parseNum(p.sleep_minutes);
+  if (sleepMin != null && sleepMin > 0) (out[date] ??= {}).sleep = round(sleepMin / 60, 2);
+  const sd = typeof p.steps_date === 'string' ? p.steps_date.trim() : '';
+  const steps = parseNum(p.steps);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(sd) && steps != null) (out[sd] ??= {}).steps = Math.round(steps);
+  return out;
 }
 
 // Keep only well-formed dates and plausible values.
