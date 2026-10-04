@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>225 Pounds of Bad Intentions</title>
+  <meta name="description" content="A public 168 → 225 lb weight-gain tracker: weight, sleep, steps and mood, synced daily from Apple Health.">
+  <meta name="theme-color" content="#14130f">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Bad Intentions">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="demo-banner" class="banner" hidden>
+    Demo mode: this is <strong>generated sample data</strong>, not real measurements.
+    <a href="./">Leave demo</a>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">225</span>
+        <span class="brand-text">Pounds of Bad Intentions</span>
+      </div>
+      <button id="log-open" class="btn btn-primary" type="button" hidden>Log today</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- HERO -->
+    <section class="hero card" aria-labelledby="hero-title">
+      <p class="eyebrow">Current milestone</p>
+      <h1 id="hero-title" class="milestone-name">Loading…</h1>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-label">Current weight <button class="info" data-fact-topic="weight" aria-label="Why weight trend matters">i</button></span>
+          <span class="stat-value" id="stat-weight">—</span>
+          <span class="stat-sub" id="stat-weight-sub"></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Days remaining</span>
+          <span class="stat-value" id="stat-days">—</span>
+          <span class="stat-sub" id="stat-days-sub"></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">To go</span>
+          <span class="stat-value" id="stat-togo">—</span>
+          <span class="stat-sub" id="stat-togo-sub"></span>
+        </div>
+      </div>
+
+      <div class="progress" id="progress" role="img" aria-label="Progress from 168 to 225 pounds">
+        <div class="progress-track" id="progress-track"></div>
+        <div class="progress-scale"><span>168</span><span>225 lb</span></div>
+      </div>
+      <p class="freshness" id="freshness"></p>
+    </section>
+
+    <!-- EMPTY STATE -->
+    <section id="empty-state" class="card empty" hidden>
+      <h2>No data yet</h2>
+      <p>The first Apple Health sync hasn't landed. Once the daily export runs, weight, sleep and steps show up here automatically.</p>
+      <p><a href="?demo">Preview the site with sample data →</a></p>
+    </section>
+
+    <!-- TRENDS -->
+    <section class="card" aria-labelledby="trend-title" id="trends">
+      <div class="section-head">
+        <h2 id="trend-title">Trends</h2>
+        <div class="seg" role="radiogroup" aria-label="Time range" id="range">
+          <button type="button" role="radio" data-range="7">1W</button>
+          <button type="button" role="radio" data-range="28" aria-checked="true">4W</button>
+          <button type="button" role="radio" data-range="0">All</button>
+        </div>
+      </div>
+      <div class="charts" id="charts">
+        <figure class="chart" id="chart-weight"><figcaption>Weight <span class="unit">lb · smoothed trend</span></figcaption><div class="plot"></div></figure>
+        <figure class="chart" id="chart-sleep"><figcaption>Sleep <span class="unit">hours</span></figcaption><div class="plot"></div></figure>
+        <figure class="chart" id="chart-steps"><figcaption>Steps</figcaption><div class="plot"></div></figure>
+        <figure class="chart" id="chart-mood"><figcaption>Mood <span class="unit">1–10</span></figcaption><div class="plot"></div></figure>
+      </div>
+      <div id="chart-tip" class="chart-tip" role="status" hidden></div>
+      <details class="table-view">
+        <summary>Show as table</summary>
+        <div class="table-scroll"><table id="data-table"></table></div>
+      </details>
+    </section>
+
+    <!-- SCORE -->
+    <section class="card" aria-labelledby="score-title">
+      <div class="section-head">
+        <h2 id="score-title">This week's score</h2>
+        <span class="pill" id="streak"></span>
+      </div>
+      <div class="score-total"><span id="score-total">0</span><span class="muted" id="score-max"></span></div>
+      <ul class="score-list" id="score-list"></ul>
+      <p class="fine">Point values are provisional until the scoring system is finalized.</p>
+    </section>
+
+    <!-- BADGES -->
+    <section class="card" aria-labelledby="badges-title">
+      <h2 id="badges-title">Badges</h2>
+      <ul class="badges" id="badges"></ul>
+    </section>
+
+    <!-- LADDER -->
+    <section class="card" aria-labelledby="ladder-title">
+      <h2 id="ladder-title">The milestone ladder</h2>
+      <ol class="ladder" id="ladder"></ol>
+    </section>
+
+    <!-- UPHILL -->
+    <section class="card uphill" aria-labelledby="uphill-title">
+      <h2 id="uphill-title">Why this is an uphill battle</h2>
+      <p>The target is <strong>about 5 lb a week</strong>. That pace takes roughly a 2,500-calorie daily surplus (using the common ~3,500 kcal per pound rule of thumb).</p>
+      <div class="math">
+        <div><span class="math-num">2,500–3,000</span><span class="math-label">calories burned a day by an active schedule</span></div>
+        <div class="math-op">+</div>
+        <div><span class="math-num">~2,500</span><span class="math-label">surplus to gain ~5 lb/week</span></div>
+        <div class="math-op">=</div>
+        <div><span class="math-num">5,000–5,500</span><span class="math-label">calories a day, about <strong>double</strong> a normal intake</span></div>
+      </div>
+      <p>On top of that: <strong>ADHD and a busy schedule</strong>. Meals get forgotten when time only comes in two flavors, "now" and "not now" <button class="info" data-fact-id="adhd-time" aria-label="Source">i</button>. Eating on a schedule, not on hunger cues, is half the fight.</p>
+    </section>
+
+    <footer class="site-footer">
+      <p>Weight, sleep and steps sync daily from Apple Health (Renpho scale + Apple Watch). Mood is self-reported.</p>
+      <p>Science notes are educational, not medical advice.</p>
+    </footer>
+  </main>
+
+  <!-- FACT POPOVER -->
+  <div id="fact-pop" class="fact-pop" role="dialog" aria-modal="false" hidden>
+    <p id="fact-text"></p>
+    <p class="fact-src" id="fact-src"></p>
+    <button type="button" class="fact-close" aria-label="Close">×</button>
+  </div>
+
+  <!-- LOG SHEET (owner only) -->
+  <dialog id="log-sheet" class="sheet">
+    <form id="log-form" method="dialog">
+      <div class="sheet-head">
+        <h2>Daily log</h2>
+        <button type="button" class="btn btn-ghost" id="log-close" aria-label="Close">×</button>
+      </div>
+
+      <label class="field">Date <input type="date" name="date" required></label>
+
+      <fieldset class="field">
+        <legend>Checks</legend>
+        <label class="check"><input type="checkbox" name="am1"> AM check 1</label>
+        <label class="check"><input type="checkbox" name="am2"> AM check 2</label>
+        <label class="check"><input type="checkbox" name="pm"> PM check</label>
+        <label class="check"><input type="checkbox" name="workout"> Workout done</label>
+      </fieldset>
+
+      <div class="field">
+        <label for="mood-input">Mood <output id="mood-out">5</output>/10</label>
+        <div class="mood-row">
+          <input id="mood-input" type="range" name="mood" min="1" max="10" step="1" value="5">
+          <span id="mood-face" class="mood-face" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <label class="field">What did I eat today?
+        <textarea name="nutrition" rows="4" placeholder="Breakfast: 4 eggs, oatmeal, whole milk…"></textarea>
+      </label>
+
+      <p class="fine" id="sync-status"></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-ghost" id="settings-open">Sync settings</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-sheet" class="sheet">
+    <form id="settings-form" method="dialog">
+      <div class="sheet-head">
+        <h2>Sync settings</h2>
+        <button type="button" class="btn btn-ghost" id="settings-close" aria-label="Close">×</button>
+      </div>
+      <p class="fine">Log entries are saved on this device first. To commit them to <code>data/manual-log.json</code>, add a fine-grained GitHub token with <em>Contents: read &amp; write</em> on this one repository. The token is stored only in this browser.</p>
+      <label class="field">Owner <input name="owner" autocomplete="off" placeholder="your-username"></label>
+      <label class="field">Repository <input name="repo" autocomplete="off" placeholder="bad-intentions-tracker"></label>
+      <label class="field">Branch <input name="branch" autocomplete="off" placeholder="main"></label>
+      <label class="field">Token <input name="token" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-ghost" id="owner-off">Turn off owner mode</button>
+        <button type="submit" class="btn btn-primary">Save settings</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+{
+  "_note": "Tooltip content pool (BI-002). Each fact must carry a real source. Topics: weight, nutrition, sleep, steps, mood. 'when' optionally narrows a fact to a data condition: sleep-low (<7h), weight-flat (trend gained <1 lb over the prior 7 days), steps-high (>=10,000), mood-low (<=4).",
+  "sources": {
+    "adhd20": "Hallowell & Ratey, ADHD 2.0 (Ballantine, 2021)",
+    "lw2008": "Leyse-Wallace, Linking Nutrition to Mental Health (iUniverse, 2008)"
+  },
+  "facts": [
+    {
+      "id": "sleep-enough",
+      "topic": "sleep",
+      "when": "sleep-low",
+      "text": "Aim for enough sleep to wake up without an alarm. Too little raises the risk of obesity, depression, high blood pressure, weakened immunity and anxiety.",
+      "source": "adhd20",
+      "where": "Ch. 6, Create a stellar environment"
+    },
+    {
+      "id": "sleep-apnea",
+      "topic": "sleep",
+      "text": "Sleep apnea can look exactly like ADHD. Waking up tired is worth getting checked.",
+      "source": "adhd20",
+      "where": "Ch. 6"
+    },
+    {
+      "id": "sleep-hygiene",
+      "topic": "sleep",
+      "text": "Sleep hygiene basics: screens off an hour before bed, phone charging outside the bedroom, and a dark, cool room.",
+      "source": "adhd20",
+      "where": "Ch. 6"
+    },
+    {
+      "id": "caffeine-bed",
+      "topic": "sleep",
+      "when": "sleep-low",
+      "text": "Coffee 30–60 minutes before bed delays sleep and worsens its quality. Much of caffeine's felt boost is just reversing overnight withdrawal.",
+      "source": "lw2008",
+      "where": "Caffeine"
+    },
+    {
+      "id": "meal-timing",
+      "topic": "weight",
+      "when": "weight-flat",
+      "text": "The brain runs on steady glucose. Mixed meals (carbohydrate + protein + fat) every 3–5 hours, breakfast included, keep it steady. Some people do best with six smaller meals 2.5–3.5 hours apart.",
+      "source": "lw2008",
+      "where": "Carbohydrates"
+    },
+    {
+      "id": "protein-sparing",
+      "topic": "weight",
+      "text": "Eating enough carbohydrate and fat spares protein for growth and repair, rather than burning it for fuel.",
+      "source": "lw2008",
+      "where": "Macronutrients"
+    },
+    {
+      "id": "protein-quality",
+      "topic": "nutrition",
+      "text": "Baseline adult protein needs are about 0.8 g per kg of body weight. Egg white and milk are the highest-quality proteins.",
+      "source": "lw2008",
+      "where": "Protein and amino acids"
+    },
+    {
+      "id": "minnesota",
+      "topic": "mood",
+      "when": "mood-low",
+      "text": "In the Minnesota semi-starvation study, volunteers on ~1,600 kcal/day grew irritable, apathetic and preoccupied with food. Recovery tracked calorie intake: those refed more generously recovered faster.",
+      "source": "lw2008",
+      "where": "Starvation and dieting"
+    },
+    {
+      "id": "two-way",
+      "topic": "mood",
+      "text": "The food–mood link runs both ways: nutrients build and run the brain, and mental state changes what and how much a person eats.",
+      "source": "lw2008",
+      "where": "Core premise"
+    },
+    {
+      "id": "dopamine-healthy",
+      "topic": "mood",
+      "text": "Healthy ways to raise dopamine: exercise, creativity, and connection to people or a bigger goal.",
+      "source": "adhd20",
+      "where": "Medication chapter"
+    },
+    {
+      "id": "exercise-stimulant",
+      "topic": "steps",
+      "when": "steps-high",
+      "text": "Exercise raises dopamine and norepinephrine much like stimulant medication does, so a burst of activity sharpens focus for a while afterward.",
+      "source": "adhd20",
+      "where": "Ch. 7, Move to focus"
+    },
+    {
+      "id": "exercise-bdnf",
+      "topic": "steps",
+      "text": "Exercise releases BDNF, a protein the authors call \"Miracle-Gro for the brain.\"",
+      "source": "adhd20",
+      "where": "Ch. 7"
+    },
+    {
+      "id": "exercise-review",
+      "topic": "steps",
+      "text": "A 2018 review (700+ people, 8 countries) found 20–30 minutes of moderate exercise improved reaction speed and precision. 65% improved at planning and organizing after a single session.",
+      "source": "adhd20",
+      "where": "Ch. 7"
+    },
+    {
+      "id": "adhd-time",
+      "topic": "nutrition",
+      "text": "People with ADHD often have a different sense of time, with only two settings: \"now\" and \"not now.\"",
+      "source": "adhd20",
+      "where": "Introduction / Ch. 1"
+    },
+    {
+      "id": "ferrari",
+      "topic": "nutrition",
+      "text": "The ADHD brain is a Ferrari engine with bicycle brakes: powerful and fast, with weak brakes. Structure and routine are how you strengthen the brakes.",
+      "source": "adhd20",
+      "where": "Introduction / Ch. 1"
+    }
+  ]
+}
