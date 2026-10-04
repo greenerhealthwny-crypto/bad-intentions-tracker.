@@ -11,7 +11,7 @@ Preview with sample data: open `docs/index.html?demo`, or `https://<you>.github.
 ```
 docs/                     GitHub Pages site (Settings → Pages → main, /docs)
   index.html              page
-  app.js                  charts, tooltips, milestones, score, badges, owner log + sync
+  app.js                  charts, tooltips, milestones, score, latest badge, owner log + sync
   style.css               styling (light + dark)
   facts.json              sourced science-tooltip pool (BI-002)
   manifest.json, sw.js    PWA install + offline
@@ -62,10 +62,9 @@ Data flow: phone → worker → `repository_dispatch` → workflow merges into `
 | Item | Status |
 | --- | --- |
 | Hero: weight, days remaining, 168–225 bar colored per milestone, milestone name | Built |
-| Milestone ladder (names exactly as confirmed) | Built |
 | Trend charts: weight (gaps interpolated, centered 7-day smoothing, no missing-day markers), sleep, steps, mood smileys (red 1 → green 10), one shared hover | Built |
 | Science tooltips | Built, with 15 facts drawn from *ADHD 2.0* and *Linking Nutrition to Mental Health*, each cited. The sleep-deprivation/catabolic-state research the SOP mentions is **not** in those books, so it still needs a sourced entry in `docs/facts.json`. **BI-002 partially done.** |
-| Badges (grayed until unlocked; unlock on the smoothed trend) | Built |
+| Latest badge only (unlocks on the smoothed trend; shows what unlocks next) | Built |
 | Weekly points + streak | Built with **provisional** values in `POINTS` (`app.js`). **BI-003 still open.** |
 | Uphill-battle framing | Built |
 | Manual log: 3 neutral checks, mood 1–10 smiley, food box, workout | Built (workout checkbox added so the Exercise score has an input) |

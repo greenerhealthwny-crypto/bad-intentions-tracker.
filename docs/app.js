@@ -20,8 +20,8 @@
     stepsGoal: 10000,
   };
 
-  // Confirmed ladder. Names are used exactly as written in the SOP.
-  // Colors step through one blue ramp (light to dark) so each rung reads as "further along".
+  // Confirmed milestones. Names are used exactly as written in the SOP.
+  // Colors step through one blue ramp (light to dark) so each milestone reads as "further along".
   const MILESTONES = [
     { min: 168, max: 173, name: "Oh Shoot, He's Really Doing It", color: '#86b6ef' },
     { min: 173, max: 180, name: 'Pardon My Gains', color: '#6da7ec' },
@@ -228,7 +228,6 @@
     $('#empty-state').hidden = hasData;
     $('#trends').hidden = !hasData;
     renderHero(health);
-    renderLadder();
     renderBadges();
     renderScore();
     if (hasData) renderCharts();
@@ -272,7 +271,7 @@
     $('#stat-togo').textContent = `${fmt1(toGo)} lb`;
     $('#stat-togo-sub').textContent = left > 0 && toGo > 0 ? `needs ${(toGo / (left / 7)).toFixed(1)} lb/week` : (toGo > 0 ? 'past goal date' : 'done');
 
-    // Progress bar: one segment per rung, each filled in its own rung color.
+    // Progress bar: one segment per milestone, each filled in its own color.
     const track = $('#progress-track');
     const cur = clamp(w ?? CONFIG.startWeight, CONFIG.startWeight, CONFIG.goalWeight);
     track.innerHTML = MILESTONES.map((ms) => {
@@ -288,17 +287,6 @@
       : (ROWS.length ? '' : 'Waiting for the first Apple Health sync.');
   }
 
-  function renderLadder() {
-    const latest = [...ROWS].reverse().find((r) => r.wRaw != null);
-    const cur = milestoneFor(latest ? latest.wRaw : CONFIG.startWeight);
-    $('#ladder').innerHTML = [...MILESTONES].reverse().map((ms) => `
-      <li class="rung${ms === cur ? ' current' : ''}${ms.finale ? ' finale' : ''}">
-        <span class="rung-swatch" style="background:${ms.color}" aria-hidden="true"></span>
-        <span class="rung-range">${ms.min}–${ms.max}</span>
-        <span class="rung-name">${esc(ms.name)}</span>
-      </li>`).join('');
-  }
-
   function renderBadges() {
     // Badges unlock on the smoothed trend so one heavy morning can't unlock one early.
     const best = ROWS.reduce((mx, r) => (isNum(r.w) && r.w > mx ? r.w : mx), -Infinity);
@@ -309,12 +297,21 @@
       need: i === 0 ? 'first weigh-in' : `${ms.min} lb trend`,
     }));
     items.push({ label: '225', name: '225 Pounds of Bad Intentions', color: GOAL_COLOR, unlocked: best >= CONFIG.goalWeight, need: '225 lb trend' });
-    $('#badges').innerHTML = items.map((b) => `
-      <li class="badge${b.unlocked ? '' : ' locked'}">
+    // Show only the most recent badge earned, plus what unlocks next.
+    const earned = items.filter((b) => b.unlocked);
+    const latest = earned[earned.length - 1];
+    const next = items.find((b) => !b.unlocked);
+    const b = latest || next;
+    $('#badges').innerHTML = `
+      <div class="badge${latest ? '' : ' locked'}">
         <div class="badge-disc" style="background:${b.color}" aria-hidden="true">${b.label}</div>
-        ${esc(b.name)}
-        <span class="badge-state">${b.unlocked ? 'Unlocked' : `Locked · ${b.need}`}</span>
-      </li>`).join('');
+        <div>
+          <div class="badge-name">${esc(b.name)}</div>
+          <span class="badge-state">${latest
+            ? (next ? `Next badge at ${next.need}` : 'Every badge earned')
+            : `Unlocks at your ${b.need}`}</span>
+        </div>
+      </div>`;
   }
 
   function renderScore() {
