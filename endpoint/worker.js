@@ -35,16 +35,21 @@ export default {
     const count = Object.keys(days).length;
     if (!count) return json(200, { ok: true, days: 0, note: 'nothing to sync' });
 
-    const res = await fetch(`https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/dispatches`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': 'bad-intentions-tracker',
-      },
-      body: JSON.stringify({ event_type: 'health-data', client_payload: { days } }),
-    });
+    let res;
+    try {
+      res = await fetch(`https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/dispatches`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'User-Agent': 'bad-intentions-tracker',
+        },
+        body: JSON.stringify({ event_type: 'health-data', client_payload: { days } }),
+      });
+    } catch (err) {
+      return json(502, { error: `GitHub unreachable: ${err.message}` });
+    }
     if (!res.ok) return json(502, { error: `GitHub dispatch failed (${res.status})` });
     return json(202, { ok: true, days: count });
   },
