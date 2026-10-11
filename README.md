@@ -46,7 +46,7 @@ endpoint/
    - URL: the worker's URL. Format: JSON. Header: `X-Tracker-Key: <SHARED_SECRET>`.
    - Metrics: Weight, Sleep Analysis, Step Count. Time grouping: Day.
    - Schedule: daily, in the morning after the weigh-in and the overnight sleep sync.
-**Free alternative to steps 4–5 (in use):** an iOS Shortcut runs every morning, reads today's weight, last night's sleep and yesterday's steps from Apple Health, and POSTs them straight to GitHub's `repository_dispatch` API. It sends event type `health-data` with `client_payload` `{ date, weight, sleep_minutes, steps_date, steps }`. It authenticates with a fine-grained PAT (this repo only, Contents read/write) stored in the shortcut. No Cloudflare worker or paid app is needed.
+**Free alternative to steps 4–5 (in use):** an iOS Shortcut runs every morning, reads today's weight, last night's sleep and yesterday's steps from Apple Health, and POSTs them straight to GitHub's `repository_dispatch` API. It sends event type `health-data` with `client_payload` `{ weight, sleep_minutes, steps }` (dates are filled in server-side from America/New_York; `date`/`steps_date` may be sent to override). It authenticates with a fine-grained PAT (this repo only, Contents read/write) stored in the shortcut. No Cloudflare worker or paid app is needed.
 
 6. **Owner logging on your phone:** open the site once with `?owner` at the end of the URL. A "Log today" button appears, on that device only. Under *Sync settings*, enter the owner, the repo and a fine-grained PAT (this repo only, Contents read/write). Entries save on the phone first and commit to `data/manual-log.json` when online.
 

@@ -17,7 +17,7 @@ const round = (v, p) => Math.round(v * 10 ** p) / 10 ** p;
 export function normalize(payload) {
   if (!payload || typeof payload !== 'object') throw new Error('Payload is not an object');
   if (payload.days && typeof payload.days === 'object') return clean(payload.days);
-  if (typeof payload.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(payload.date.trim())) return clean(fromShortcut(payload));
+  if (['weight', 'sleep_minutes', 'steps'].some((k) => k in payload)) return clean(fromShortcut(payload));
   const metrics = payload.data?.metrics ?? payload.metrics;
   if (!Array.isArray(metrics)) throw new Error('No metrics array found in payload');
 
@@ -63,9 +63,10 @@ export function normalize(payload) {
 }
 
 // The iOS Shortcut runs each morning and sends one flat object:
-//   { date, weight, sleep_minutes, steps_date, steps }
+//   { weight, sleep_minutes, steps }  (optionally date and steps_date, as YYYY-MM-DD)
 // date = today (this morning's weigh-in and last night's sleep), steps_date = yesterday
-// (a full day of steps). Shortcuts may send numbers as text like "170.2 lb" or "12,034",
+// (a full day of steps). When the dates are left out they are filled in from the
+// current day in TRACKER_TZ (default America/New_York). Shortcuts may send numbers as text like "170.2 lb" or "12,034",
 // and leaves a field empty when there is no sample, so parse leniently.
 function parseNum(v) {
   if (typeof v === 'number') return Number.isFinite(v) ? v : null;
@@ -73,18 +74,27 @@ function parseNum(v) {
   const m = v.replace(/,/g, '').match(/-?\d+(\.\d+)?/);
   return m ? Number(m[0]) : null;
 }
+const isDay = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v.trim());
+function localDay(offsetDays = 0, now = new Date()) {
+  const tz = (typeof process !== 'undefined' && process.env && process.env.TRACKER_TZ) || 'America/New_York';
+  // en-CA formats as YYYY-MM-DD.
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+  const d = new Date(`${today}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + offsetDays);
+  return d.toISOString().slice(0, 10);
+}
 function fromShortcut(p) {
   const out = {};
-  const date = p.date.trim();
+  const date = isDay(p.date) ? p.date.trim() : localDay(0);
   let w = parseNum(p.weight);
   // Apple Health may hand back kilograms; the goal range (168–225 lb) never overlaps kg values.
   if (w != null && (/kg/i.test(String(p.weight)) || w < 120)) w *= KG_TO_LB;
   if (w != null) (out[date] ??= {}).weight = round(w, 1);
   const sleepMin = parseNum(p.sleep_minutes);
   if (sleepMin != null && sleepMin > 0) (out[date] ??= {}).sleep = round(sleepMin / 60, 2);
-  const sd = typeof p.steps_date === 'string' ? p.steps_date.trim() : '';
+  const sd = isDay(p.steps_date) ? p.steps_date.trim() : localDay(-1);
   const steps = parseNum(p.steps);
-  if (/^\d{4}-\d{2}-\d{2}$/.test(sd) && steps != null) (out[sd] ??= {}).steps = Math.round(steps);
+  if (steps != null) (out[sd] ??= {}).steps = Math.round(steps);
   return out;
 }
 
