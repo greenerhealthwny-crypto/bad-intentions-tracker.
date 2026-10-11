@@ -17,7 +17,8 @@ const round = (v, p) => Math.round(v * 10 ** p) / 10 ** p;
 export function normalize(payload) {
   if (!payload || typeof payload !== 'object') throw new Error('Payload is not an object');
   if (payload.days && typeof payload.days === 'object') return clean(payload.days);
-  if (['weight', 'sleep_minutes', 'steps'].some((k) => k in payload)) return clean(fromShortcut(payload));
+  const flat = normalizeKeys(payload);
+  if (['weight', 'sleep_minutes', 'steps'].some((k) => k in flat)) return clean(fromShortcut(flat));
   const metrics = payload.data?.metrics ?? payload.metrics;
   if (!Array.isArray(metrics)) throw new Error('No metrics array found in payload');
 
@@ -73,6 +74,16 @@ function parseNum(v) {
   if (typeof v !== 'string') return null;
   const m = v.replace(/,/g, '').match(/-?\d+(\.\d+)?/);
   return m ? Number(m[0]) : null;
+}
+// "Sleep Minutes", "sleep-minutes" and "SleepMinutes" all become "sleep_minutes".
+function normalizeKeys(obj) {
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    const key = k.trim().replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    out[key] = v;
+  }
+  if ('sleep' in out && !('sleep_minutes' in out)) out.sleep_minutes = out.sleep;
+  return out;
 }
 const isDay = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v.trim());
 function localDay(offsetDays = 0, now = new Date()) {
