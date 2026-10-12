@@ -17,8 +17,8 @@
     // so the sync workflow copies public data into docs/data/.
     dataBases: ['data/', '../data/'],
     sleepGoalHours: 7,
-    // Daily calorie target for the "Eating enough" score: ~2,500–3,000 burned + ~2,500 surplus.
-    calorieTarget: 5000,
+    // Daily calorie target for the "Eating enough" score (set by Steven; Glute Lab gain rule ≈ body weight × 16–18).
+    calorieTarget: 3500,
     stepsGoal: 10000,
   };
 
