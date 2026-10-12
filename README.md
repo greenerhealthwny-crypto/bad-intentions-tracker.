@@ -67,7 +67,7 @@ Data flow: phone → worker → `repository_dispatch` → workflow merges into `
 | Trend charts: weight (gaps interpolated, centered 7-day smoothing, no missing-day markers), sleep, steps, mood smileys (red 1 → green 10), one shared hover | Built |
 | Science tooltips | Built, with 15 facts drawn from *ADHD 2.0* and *Linking Nutrition to Mental Health*, each cited. The sleep-deprivation/catabolic-state research the SOP mentions is **not** in those books, so it still needs a sourced entry in `docs/facts.json`. **BI-002 partially done.** |
 | Latest badge only (unlocks on the smoothed trend; shows what unlocks next) | Built |
-| Weekly points + streak | Built with **provisional** values in `POINTS` (`app.js`). **BI-003 still open.** |
+| Weekly points + streak | Built. 100 pts/week: sleep 24, eating enough 24, medication 24, weight gain 14, exercise 14 (`POINTS` in `app.js`). Eating enough uses "food logged" until calorie estimates (BI-004) exist. |
 | Uphill-battle framing | Built |
 | Manual log: 3 neutral checks, mood 1–10 smiley, food box, workout | Built (workout checkbox added so the Exercise score has an input) |
 | Calorie auto-calc from food text | **BI-004 open** |

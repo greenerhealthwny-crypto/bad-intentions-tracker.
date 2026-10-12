@@ -35,14 +35,17 @@
   ];
   const GOAL_COLOR = '#eb6834';
 
-  // Provisional point values (BI-003 will replace these).
+  // Weekly score (BI-003): 100 points. Sleep, eating enough and medication carry the most
+  // weight; weight gain and exercise split the rest evenly. Each category earns its share
+  // of the max for the fraction of the week's target it hit.
   const POINTS = {
-    weight: { label: 'Weight gain goal', max: 30 },  // scaled by % of the weekly target hit so far
-    sleep: { label: 'Sleep', per: 4, max: 28 },      // per night at or above the sleep goal
-    exercise: { label: 'Exercise', per: 5, max: 25 }, // per logged workout
-    nutrition: { label: 'Nutrition', per: 2, max: 14 }, // per day with a food log
-    meds: { label: 'Medication', per: 1, max: 21 },  // per check ticked
+    sleep: { label: 'Sleep', max: 24 },           // nights at or above the sleep goal, out of 7
+    nutrition: { label: 'Eating enough', max: 24 }, // days with a food log, out of 7 (calorie check once BI-004 lands)
+    meds: { label: 'Medication', max: 24 },        // checks ticked, out of 21 (3 a day)
+    weight: { label: 'Weight gain goal', max: 14 },  // trend gain vs the pro-rated weekly target
+    exercise: { label: 'Exercise', max: 14 },      // logged workouts, out of 5
   };
+
 
   // ------------------------------------------------------------- utilities
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -329,12 +332,13 @@
     const gain = lastW && firstW && lastW !== firstW ? lastW.w - firstW.w : 0;
     const target = CONFIG.weeklyTargetLb * (elapsed / 7);
 
+    const share = (k, frac) => Math.round(clamp(frac, 0, 1) * POINTS[k].max);
     const s = {
-      weight: Math.round(clamp(gain / target, 0, 1) * POINTS.weight.max),
-      sleep: Math.min(POINTS.sleep.max, week.filter((r) => isNum(r.sleep) && r.sleep >= CONFIG.sleepGoalHours).length * POINTS.sleep.per),
-      exercise: Math.min(POINTS.exercise.max, week.filter((r) => r.workout).length * POINTS.exercise.per),
-      nutrition: Math.min(POINTS.nutrition.max, week.filter((r) => r.ate).length * POINTS.nutrition.per),
-      meds: Math.min(POINTS.meds.max, week.reduce((a, r) => a + r.checks, 0) * POINTS.meds.per),
+      sleep: share('sleep', week.filter((r) => isNum(r.sleep) && r.sleep >= CONFIG.sleepGoalHours).length / 7),
+      nutrition: share('nutrition', week.filter((r) => r.ate).length / 7),
+      meds: share('meds', week.reduce((a, r) => a + r.checks, 0) / 21),
+      weight: share('weight', gain / target),
+      exercise: share('exercise', week.filter((r) => r.workout).length / 5),
     };
     const total = Object.values(s).reduce((a, b) => a + b, 0);
     const max = Object.values(POINTS).reduce((a, p) => a + p.max, 0);

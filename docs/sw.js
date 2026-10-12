@@ -2,7 +2,7 @@
  * site opens without signal; data files are network-first so fresh numbers win
  * whenever there is a connection.
  */
-const CACHE = 'bi-shell-v3';
+const CACHE = 'bi-shell-v4';
 const SHELL = [
   './',
   'index.html',
