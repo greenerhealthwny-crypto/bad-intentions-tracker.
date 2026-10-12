@@ -48,6 +48,8 @@ endpoint/
    - Schedule: daily, in the morning after the weigh-in and the overnight sleep sync.
 **Free alternative to steps 4–5 (in use):** an iOS Shortcut runs every morning, reads today's weight, last night's sleep and yesterday's steps from Apple Health, and POSTs them straight to GitHub's `repository_dispatch` API. It sends event type `health-data` with `client_payload` `{ weight, sleep_minutes, steps }` (dates are filled in server-side from America/New_York; `date`/`steps_date` may be sent to override). It authenticates with a fine-grained PAT (this repo only, Contents read/write) stored in the shortcut. No Cloudflare worker or paid app is needed.
 
+**Public vs owner view:** everyone who opens the site sees the read-only progress page. The **Log today** button only appears in a browser that once opened the site with `?owner`. Add `?view` to preview the public page on your own device.
+
 6. **Owner logging on your phone:** open the site once with `?owner` at the end of the URL. A "Log today" button appears, on that device only. Under *Sync settings*, enter the owner, the repo and a fine-grained PAT (this repo only, Contents read/write). Entries save on the phone first and commit to `data/manual-log.json` when online.
 
 Data flow: phone → worker → `repository_dispatch` → workflow merges into `data/health-data.json` → `publish.mjs` → `docs/data/` → site. A log commit triggers the same workflow (push to `data/**`). A daily cron re-publishes as a safety net.

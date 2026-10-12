@@ -103,7 +103,8 @@
   const params = new URLSearchParams(location.search);
   const DEMO = params.has('demo');
   if (params.has('owner')) store.set('bi.owner', true);
-  const OWNER = store.get('bi.owner', false);
+  // ?view shows the public page (no Log today) even on the owner's own device.
+  const OWNER = store.get('bi.owner', false) && !params.has('view');
 
   async function loadJSON(name) {
     for (const base of CONFIG.dataBases) {
