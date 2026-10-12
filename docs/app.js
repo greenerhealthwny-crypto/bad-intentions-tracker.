@@ -17,6 +17,8 @@
     // so the sync workflow copies public data into docs/data/.
     dataBases: ['data/', '../data/'],
     sleepGoalHours: 7,
+    // Daily calorie target for the "Eating enough" score: ~2,500–3,000 burned + ~2,500 surplus.
+    calorieTarget: 5000,
     stepsGoal: 10000,
   };
 
@@ -40,7 +42,7 @@
   // of the max for the fraction of the week's target it hit.
   const POINTS = {
     sleep: { label: 'Sleep', max: 24 },           // nights at or above the sleep goal, out of 7
-    nutrition: { label: 'Eating enough', max: 24 }, // days with a food log, out of 7 (calorie check once BI-004 lands)
+    nutrition: { label: 'Eating enough', max: 24 }, // estimated calories vs CONFIG.calorieTarget, each day out of 7
     meds: { label: 'Medication', max: 24 },        // checks ticked, out of 21 (3 a day)
     weight: { label: 'Weight gain goal', max: 14 },  // trend gain vs the pro-rated weekly target
     exercise: { label: 'Exercise', max: 14 },      // logged workouts, out of 5
@@ -150,6 +152,7 @@
       checks,
       workout: !!e.workout,
       ate: typeof e.ate === 'boolean' ? e.ate : !!(e.nutrition && e.nutrition.trim()),
+      kcal: isNum(e.kcal) ? e.kcal : null,
     };
   }
 
@@ -176,6 +179,7 @@
         checks: e ? e.checks : 0,
         workout: e ? e.workout : false,
         ate: e ? e.ate : false,
+        kcal: e ? e.kcal : null,
         logged: !!e,
       });
     }
@@ -200,6 +204,7 @@
 
   // ---------------------------------------------------------------- facts
   let FACTS = { sources: {}, facts: [] };
+  let FOODS = null; // USDA calorie table for the owner's food log (docs/foods.json)
   function factCondition(row, rows, i) {
     const c = new Set();
     if (row) {
@@ -335,7 +340,8 @@
     const share = (k, frac) => Math.round(clamp(frac, 0, 1) * POINTS[k].max);
     const s = {
       sleep: share('sleep', week.filter((r) => isNum(r.sleep) && r.sleep >= CONFIG.sleepGoalHours).length / 7),
-      nutrition: share('nutrition', week.filter((r) => r.ate).length / 7),
+      // Each day earns up to 1/7 of the points for reaching the calorie target.
+      nutrition: share('nutrition', week.reduce((a, r) => a + (isNum(r.kcal) ? Math.min(1, r.kcal / CONFIG.calorieTarget) : 0), 0) / 7),
       meds: share('meds', week.reduce((a, r) => a + r.checks, 0) / 21),
       weight: share('weight', gain / target),
       exercise: share('exercise', week.filter((r) => r.workout).length / 5),
@@ -603,8 +609,18 @@
       form.nutrition.value = e.nutrition || '';
       syncMoodFace();
     };
-    form.date.addEventListener('change', () => fill(form.date.value));
-    openBtn.addEventListener('click', () => { fill(localToday()); updateSyncStatus(); sheet.showModal(); });
+    const showEstimate = () => {
+      const box = $('#kcal-estimate');
+      if (!FOODS || !window.BICalories) { box.textContent = ''; return; }
+      const r = window.BICalories.estimate(form.nutrition.value, FOODS);
+      if (!r.items.length && !r.unknown.length) { box.textContent = ''; return; }
+      box.innerHTML = `<strong>≈ ${r.total.toLocaleString()} kcal</strong> of ${CONFIG.calorieTarget.toLocaleString()} target`
+        + `<ul>${r.items.map((i) => `<li>${esc(i.text)} → ${esc(i.food)}, ${i.kcal} kcal</li>`).join('')}</ul>`
+        + (r.unknown.length ? `<span class="kcal-unknown">Not counted (not in the food list): ${esc(r.unknown.join(', '))}</span>` : '');
+    };
+    form.nutrition.addEventListener('input', showEstimate);
+    form.date.addEventListener('change', () => { fill(form.date.value); showEstimate(); });
+    openBtn.addEventListener('click', () => { fill(localToday()); showEstimate(); updateSyncStatus(); sheet.showModal(); });
     $('#log-close').addEventListener('click', () => sheet.close());
 
     form.addEventListener('submit', async (ev) => {
@@ -614,6 +630,7 @@
         am1: form.am1.checked, am2: form.am2.checked, pm: form.pm.checked,
         workout: form.workout.checked, mood: +moodIn.value,
         nutrition: form.nutrition.value.trim(),
+        kcal: FOODS && window.BICalories && form.nutrition.value.trim() ? window.BICalories.estimate(form.nutrition.value, FOODS).total : undefined,
         savedAt: new Date().toISOString(),
       };
       store.set(LOG_KEY, log);
@@ -734,6 +751,7 @@
       [HEALTH, MANUAL] = await Promise.all([loadJSON('health-data.json'), loadJSON('manual-log.json')]);
     }
     FACTS = (await factsP) || FACTS;
+    if (OWNER && !DEMO) FOODS = await fetch('foods.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
     rebuild();
     setupOwner();
 

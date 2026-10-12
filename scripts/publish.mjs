@@ -22,6 +22,7 @@ for (const [d, e] of Object.entries(manual.entries || {})) {
     checks: ['am1', 'am2', 'pm'].filter((k) => e[k] === true).length,
     workout: e.workout === true,
     ate: typeof e.nutrition === 'string' && e.nutrition.trim().length > 0,
+    ...(Number.isFinite(e.kcal) && e.kcal >= 0 && e.kcal < 20000 && { kcal: Math.round(e.kcal) }),
   };
 }
 write('../docs/data/manual-log.json', { entries });

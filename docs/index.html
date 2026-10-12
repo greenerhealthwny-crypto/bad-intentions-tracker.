@@ -162,8 +162,10 @@
       </div>
 
       <label class="field">What did I eat today?
-        <textarea name="nutrition" rows="4" placeholder="Breakfast: 4 eggs, oatmeal, whole milk…"></textarea>
+        <textarea name="nutrition" rows="4" placeholder="4 eggs, 2 cups oatmeal, 2 tbsp peanut butter, 8 oz chicken…"></textarea>
       </label>
+      <div class="kcal-estimate fine" id="kcal-estimate" aria-live="polite"></div>
+      <p class="fine">Calorie estimates use USDA FoodData Central values and standard portion sizes.</p>
 
       <p class="fine" id="sync-status"></p>
       <div class="sheet-actions">
@@ -191,6 +193,7 @@
     </form>
   </dialog>
 
+  <script src="calories.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
