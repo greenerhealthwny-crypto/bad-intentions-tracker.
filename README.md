@@ -67,7 +67,7 @@ Data flow: phone → worker → `repository_dispatch` → workflow merges into `
 | Trend charts: weight (gaps interpolated, centered 7-day smoothing, no missing-day markers), sleep, steps, mood smileys (red 1 → green 10), one shared hover | Built |
 | Science tooltips | Built, with 15 facts drawn from *ADHD 2.0* and *Linking Nutrition to Mental Health*, each cited. The sleep-deprivation/catabolic-state research the SOP mentions is **not** in those books, so it still needs a sourced entry in `docs/facts.json`. **BI-002 partially done.** |
 | Latest badge only (unlocks on the smoothed trend; shows what unlocks next) | Built |
-| Weekly points + streak | Built. 100 pts/week: sleep 24, eating enough 24, medication 24, weight gain 14, exercise 14 (`POINTS` in `app.js`). Eating enough uses "food logged" until calorie estimates (BI-004) exist. |
+| Weekly points + streak | Built. 100 pts/week: sleep 24, eating enough 24, medication 24, weight gain 14, exercise 14 (`POINTS` in `app.js`). Eating enough = estimated kcal vs a 5,000 kcal/day target. |
 | Uphill-battle framing | Built |
 | Manual log: 3 neutral checks, mood 1–10 smiley, food box, workout | Built (workout checkbox added so the Exercise score has an input) |
 | Calorie estimates from food text | Built (BI-004). `docs/calories.js` reads notes like "4 eggs, 2 cups oatmeal" against `docs/foods.json`: 65 common foods from USDA FoodData Central SR Legacy (kcal per 100 g + USDA portion weights, FDC ID kept per food). Unmatched items are listed, never guessed. Daily kcal feeds the "Eating enough" score (target 5,000). |
