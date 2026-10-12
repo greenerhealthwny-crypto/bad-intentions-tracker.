@@ -296,15 +296,15 @@
   }
 
   function renderBadges() {
-    // Badges unlock on the smoothed trend so one heavy morning can't unlock one early.
-    const best = ROWS.reduce((mx, r) => (isNum(r.w) && r.w > mx ? r.w : mx), -Infinity);
+    // Badges unlock on the highest actual weigh-in, so they always agree with the milestone shown up top.
+    const best = ROWS.reduce((mx, r) => (isNum(r.wRaw) && r.wRaw > mx ? r.wRaw : mx), -Infinity);
     const any = ROWS.some((r) => r.wRaw != null);
     const items = MILESTONES.map((ms, i) => ({
       label: String(ms.min), name: ms.name, color: ms.color,
       unlocked: i === 0 ? any : best >= ms.min,
-      need: i === 0 ? 'first weigh-in' : `${ms.min} lb trend`,
+      need: i === 0 ? 'first weigh-in' : `${ms.min} lb`,
     }));
-    items.push({ label: '225', name: '225 Pounds of Bad Intentions', color: GOAL_COLOR, unlocked: best >= CONFIG.goalWeight, need: '225 lb trend' });
+    items.push({ label: '225', name: '225 Pounds of Bad Intentions', color: GOAL_COLOR, unlocked: best >= CONFIG.goalWeight, need: '225 lb' });
     // Show only the most recent badge earned, plus what unlocks next.
     const earned = items.filter((b) => b.unlocked);
     const latest = earned[earned.length - 1];

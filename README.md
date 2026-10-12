@@ -66,7 +66,7 @@ Data flow: phone → worker → `repository_dispatch` → workflow merges into `
 | Hero: weight, days remaining, 168–225 bar colored per milestone, milestone name | Built |
 | Trend charts: weight (gaps interpolated, centered 7-day smoothing, no missing-day markers), sleep, steps, mood smileys (red 1 → green 10), one shared hover | Built |
 | Science tooltips | Built, with 22 cited facts from *ADHD 2.0*, *Linking Nutrition to Mental Health*, *Glute Lab* (sleep, protein, gain calories, cardio) and *The Ministry of Healing*. The sleep-deprivation/catabolic-state research the SOP mentions is **not** in those books, so it still needs a sourced entry in `docs/facts.json`. **BI-002 partially done.** |
-| Latest badge only (unlocks on the smoothed trend; shows what unlocks next) | Built |
+| Latest badge only (unlocks on the highest actual weigh-in, matching the milestone shown; shows what unlocks next) | Built |
 | Weekly points + streak | Built. 100 pts/week: sleep 24, eating enough 24, medication 24, weight gain 14, exercise 14 (`POINTS` in `app.js`). Eating enough = estimated kcal vs a 3,500 kcal/day target. |
 | Uphill-battle framing | Built |
 | Manual log: 3 neutral checks, mood 1–10 smiley, food box, workout | Built (workout checkbox added so the Exercise score has an input) |
