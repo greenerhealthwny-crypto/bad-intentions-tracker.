@@ -2,7 +2,9 @@
   "_note": "Tooltip content pool (BI-002). Each fact must carry a real source. Topics: weight, nutrition, sleep, steps, mood. 'when' optionally narrows a fact to a data condition: sleep-low (<7h), weight-flat (trend gained <1 lb over the prior 7 days), steps-high (>=10,000), mood-low (<=4).",
   "sources": {
     "adhd20": "Hallowell & Ratey, ADHD 2.0 (Ballantine, 2021)",
-    "lw2008": "Leyse-Wallace, Linking Nutrition to Mental Health (iUniverse, 2008)"
+    "lw2008": "Leyse-Wallace, Linking Nutrition to Mental Health (iUniverse, 2008)",
+    "glutelab": "Contreras & Cordoza, Glute Lab (Victory Belt, 2019)",
+    "mh": "White, The Ministry of Healing (1905)"
   },
   "facts": [
     {
@@ -114,6 +116,57 @@
       "text": "The ADHD brain is a Ferrari engine with bicycle brakes: powerful and fast, with weak brakes. Structure and routine are how you strengthen the brakes.",
       "source": "adhd20",
       "where": "Introduction / Ch. 1"
+    },
+    {
+      "id": "gl-sleep",
+      "topic": "sleep",
+      "when": "sleep-low",
+      "text": "Sleep 7–9 hours a night. If you're very stressed, take the day off or lower your training volume.",
+      "source": "glutelab",
+      "where": "Goals, diet and lifestyle"
+    },
+    {
+      "id": "gl-results",
+      "topic": "sleep",
+      "text": "Not seeing results? The first questions: are you sleeping enough, training hard enough (or too hard), on the right program, and is diet the issue?",
+      "source": "glutelab",
+      "where": "Troubleshooting: plateaus"
+    },
+    {
+      "id": "gl-gain-calories",
+      "topic": "weight",
+      "when": "weight-flat",
+      "text": "To gain weight, the book's rule of thumb is body weight (lb) × 16–18 calories a day; maintenance is about × 14–15. People tend to underestimate how much (or how little) they eat.",
+      "source": "glutelab",
+      "where": "Goals, diet and lifestyle"
+    },
+    {
+      "id": "gl-protein",
+      "topic": "weight",
+      "text": "Protein: about 1 g per lb of lean body mass a day (roughly 0.8 g × body weight in lb), split across 3–4 meals.",
+      "source": "glutelab",
+      "where": "Goals, diet and lifestyle"
+    },
+    {
+      "id": "gl-preworkout",
+      "topic": "nutrition",
+      "text": "Strict meal timing matters little for most people; eat 1–2 hours before training so the workout is fueled.",
+      "source": "glutelab",
+      "where": "Goals, diet and lifestyle"
+    },
+    {
+      "id": "gl-cardio",
+      "topic": "steps",
+      "text": "Cardio competes with recovery (the \"interference effect\"). Walking and cycling interfere less than jogging, and a step goal like 10,000 is a fine alternative.",
+      "source": "glutelab",
+      "where": "Goals, diet and lifestyle"
+    },
+    {
+      "id": "mh-remedies",
+      "topic": "mood",
+      "text": "\"Pure air, sunlight, abstemiousness, rest, exercise, proper diet, the use of water, trust in divine power, — these are the true remedies.\"",
+      "source": "mh",
+      "where": "p. 127"
     }
   ]
 }
