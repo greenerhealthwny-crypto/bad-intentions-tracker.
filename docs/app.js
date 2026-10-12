@@ -10,9 +10,9 @@
     goalWeight: 225,
     weeklyTargetLb: 5,
     // 'YYYY-MM-DD'. null = first day that has data.
-    startDate: null,
+    startDate: '2026-10-04',
     // 'YYYY-MM-DD'. null = startDate + enough weeks to hit the goal at weeklyTargetLb.
-    goalDate: null,
+    goalDate: '2026-12-27', // 12 weeks after the start
     // Where the published data lives, tried in order. GitHub Pages serves /docs,
     // so the sync workflow copies public data into docs/data/.
     dataBases: ['data/', '../data/'],
